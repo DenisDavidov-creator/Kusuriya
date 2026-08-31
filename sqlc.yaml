@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "migrations"
+    queries: "internal/knowledgebase/repository/query"
+    gen:
+      go: 
+        package: "sqlcgen"
+        sql_package: "pgx/v5"
+        out: "internal/knowledgebase/repository/sqlc"

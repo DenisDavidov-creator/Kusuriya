@@ -42,7 +42,7 @@ CREATE TABLE factor_profiles (
 
     CONSTRAINT uq_factor_cause UNIQUE (factor_id, cause_id),
     CONSTRAINT fk_cause FOREIGN KEY (cause_id) REFERENCES causes(id) ON DELETE CASCADE,
-    CONSTRAINT fk_factor FOREIGN KEY (factor_id) REFERENCES factors(id) ON DELETE CASCADE
+    CONSTRAINT fk_factor FOREIGN KEY (factor_id) REFERENCES factors(id) ON DELETE CASCADE,
     CONSTRAINT chk_modifier CHECK (modifier > 0 AND modifier <= 1)
 
 );
@@ -70,7 +70,7 @@ CREATE TABLE symptom_profiles (
 
     CONSTRAINT uq_symptom_cause UNIQUE (symptom_id, cause_id),
     CONSTRAINT fk_cause FOREIGN KEY (cause_id) REFERENCES causes(id) ON DELETE CASCADE,
-    CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id) ON DELETE CASCADE
+    CONSTRAINT fk_symptom FOREIGN KEY (symptom_id) REFERENCES symptoms(id) ON DELETE CASCADE,
     CONSTRAINT chk_likelihood CHECK (likelihood > 0 AND likelihood <= 1)
 );
 

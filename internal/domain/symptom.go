@@ -5,5 +5,10 @@ type Symptom struct {
 	Code        string
 	Name        string
 	Description string
-	Category    string
+	CategoryID  int64
+}
+
+type Category struct {
+	ID   int64
+	Name string
 }
