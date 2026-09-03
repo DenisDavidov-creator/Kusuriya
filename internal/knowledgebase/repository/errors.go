@@ -4,10 +4,14 @@ import (
 	"Kusuriya/internal/domain"
 	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func MapPgError(err error) error {
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.ErrNotFound
+	}
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {

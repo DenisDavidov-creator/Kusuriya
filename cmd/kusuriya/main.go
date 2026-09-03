@@ -33,7 +33,11 @@ func main() {
 
 	hk := handler.NewKnowledgebaseHandler(sk)
 
-	r.Post("/something", hk.CreateCause)
+	r.Post("/cause", hk.CreateCause)
+	r.Get("/cause/{id}", hk.GetCauseByID)
+	r.Get("/cause", hk.GetCauses)
+	r.Put("/cause/{id}", hk.UpdateCause)
+	r.Delete("/cause/{id}", hk.DeleteCause)
 
 	log.Info("starting server", "port", 8080)
 

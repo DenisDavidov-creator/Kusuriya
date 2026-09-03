@@ -47,3 +47,111 @@ func (q *Queries) CreateCause(ctx context.Context, arg CreateCauseParams) (Cause
 	)
 	return i, err
 }
+
+const deleteCause = `-- name: DeleteCause :exec
+DELETE FROM causes
+WHERE id = $1
+`
+
+func (q *Queries) DeleteCause(ctx context.Context, id int64) error {
+	_, err := q.db.Exec(ctx, deleteCause, id)
+	return err
+}
+
+const getCauseByID = `-- name: GetCauseByID :one
+SELECT id, code, name, type, prior, description, remedy_id FROM causes
+WHERE id = $1
+`
+
+func (q *Queries) GetCauseByID(ctx context.Context, id int64) (Cause, error) {
+	row := q.db.QueryRow(ctx, getCauseByID, id)
+	var i Cause
+	err := row.Scan(
+		&i.ID,
+		&i.Code,
+		&i.Name,
+		&i.Type,
+		&i.Prior,
+		&i.Description,
+		&i.RemedyID,
+	)
+	return i, err
+}
+
+const getCauses = `-- name: GetCauses :many
+SELECT id, code, name, type, prior, description, remedy_id FROM causes
+ORDER BY id
+`
+
+func (q *Queries) GetCauses(ctx context.Context) ([]Cause, error) {
+	rows, err := q.db.Query(ctx, getCauses)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Cause
+	for rows.Next() {
+		var i Cause
+		if err := rows.Scan(
+			&i.ID,
+			&i.Code,
+			&i.Name,
+			&i.Type,
+			&i.Prior,
+			&i.Description,
+			&i.RemedyID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateCause = `-- name: UpdateCause :one
+UPDATE causes 
+SET code = $1,
+    name = $2,
+    type = $3,
+    prior = $4,
+    description = $5,
+    remedy_id = $6
+WHERE id = $7
+RETURNING id, code, name, type, prior, description, remedy_id
+`
+
+type UpdateCauseParams struct {
+	Code        string
+	Name        string
+	Type        string
+	Prior       float64
+	Description pgtype.Text
+	RemedyID    pgtype.Int8
+	ID          int64
+}
+
+func (q *Queries) UpdateCause(ctx context.Context, arg UpdateCauseParams) (Cause, error) {
+	row := q.db.QueryRow(ctx, updateCause,
+		arg.Code,
+		arg.Name,
+		arg.Type,
+		arg.Prior,
+		arg.Description,
+		arg.RemedyID,
+		arg.ID,
+	)
+	var i Cause
+	err := row.Scan(
+		&i.ID,
+		&i.Code,
+		&i.Name,
+		&i.Type,
+		&i.Prior,
+		&i.Description,
+		&i.RemedyID,
+	)
+	return i, err
+}
