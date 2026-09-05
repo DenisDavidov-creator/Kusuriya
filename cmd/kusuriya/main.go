@@ -39,6 +39,25 @@ func main() {
 	r.Put("/cause/{id}", hk.UpdateCause)
 	r.Delete("/cause/{id}", hk.DeleteCause)
 
+	r.Put("/cause/{id}/symptom-profiles", hk.CreateSymptomProfiles)
+	r.Put("/cause/{id}/factor-profiles", hk.CreateFactorProfiles)
+
+	r.Post("/remedy", hk.CreateRemedy)
+	r.Get("/remedy/{id}", hk.GetRemedyByID)
+	r.Get("/remedy", hk.GetRemedies)
+
+	r.Post("/factor", hk.CreateFactor)
+	r.Get("/factor/{id}", hk.GetFactorByID)
+	r.Get("/factor", hk.GetFactors)
+
+	r.Post("/category", hk.CreateCategory)
+	r.Get("/category/{id}", hk.GetCategoryByID)
+	r.Get("/category", hk.GetCategories)
+
+	r.Post("/symptom", hk.CreateSymptom)
+	r.Get("/symptom/{id}", hk.GetSymptomByID)
+	r.Get("/symptom", hk.GetSymptoms)
+
 	log.Info("starting server", "port", 8080)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
