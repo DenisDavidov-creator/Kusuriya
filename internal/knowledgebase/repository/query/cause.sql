@@ -25,3 +25,10 @@ RETURNING id, code, name, type, prior, description, remedy_id;
 -- name: DeleteCause :exec 
 DELETE FROM causes
 WHERE id = $1;
+
+-- name: GetCausesWithRemediesByIDs :many
+SELECT c.id, c.code, c.name, c.type, c.prior, c.description, r.id AS remedy_id, r.name AS remedy_name, r.description AS remedy_description, r.notes AS remedy_notes
+FROM causes c
+LEFT JOIN remedies r ON c.remedy_id = r.id
+WHERE c.id = ANY($1::bigint[])
+ORDER BY c.id;

@@ -1,9 +1,11 @@
 package main
 
 import (
-	"Kusuriya/internal/knowledgebase/handler"
+	hdh "Kusuriya/internal/diagnose/handler"
+	sds "Kusuriya/internal/diagnose/service"
+	hkh "Kusuriya/internal/knowledgebase/handler"
 	"Kusuriya/internal/knowledgebase/repository"
-	"Kusuriya/internal/knowledgebase/service"
+	sks "Kusuriya/internal/knowledgebase/service"
 	"Kusuriya/internal/logger"
 	"context"
 	"fmt"
@@ -29,9 +31,11 @@ func main() {
 
 	rk := repository.NewKnowledgebaseRepository(pool)
 
-	sk := service.NewKnowledgebaseService(rk)
+	sk := sks.NewKnowledgebaseService(rk)
+	sd := sds.NewDiagnoseService(rk)
 
-	hk := handler.NewKnowledgebaseHandler(sk)
+	hk := hkh.NewKnowledgebaseHandler(sk)
+	hd := hdh.NewDiagnoseHandler(sd)
 
 	r.Post("/cause", hk.CreateCause)
 	r.Get("/cause/{id}", hk.GetCauseByID)
@@ -58,6 +62,7 @@ func main() {
 	r.Get("/symptom/{id}", hk.GetSymptomByID)
 	r.Get("/symptom", hk.GetSymptoms)
 
+	r.Post("/diagnose", hd.DeterminDiagnose)
 	log.Info("starting server", "port", 8080)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {

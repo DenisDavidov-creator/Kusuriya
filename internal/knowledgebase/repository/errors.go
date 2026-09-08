@@ -22,4 +22,4 @@ func MapPgError(err error) error {
 	return err
 }
 
-var ErrTransaction = errors.New("no transactional in context")
+var ErrTransaction = errors.New("no transaction in context")

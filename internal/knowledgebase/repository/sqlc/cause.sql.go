@@ -111,6 +111,58 @@ func (q *Queries) GetCauses(ctx context.Context) ([]Cause, error) {
 	return items, nil
 }
 
+const getCausesWithRemediesByIDs = `-- name: GetCausesWithRemediesByIDs :many
+SELECT c.id, c.code, c.name, c.type, c.prior, c.description, r.id AS remedy_id, r.name AS remedy_name, r.description AS remedy_description, r.notes AS remedy_notes
+FROM causes c
+LEFT JOIN remedies r ON c.remedy_id = r.id
+WHERE c.id = ANY($1::bigint[])
+ORDER BY c.id
+`
+
+type GetCausesWithRemediesByIDsRow struct {
+	ID                int64
+	Code              string
+	Name              string
+	Type              string
+	Prior             float64
+	Description       pgtype.Text
+	RemedyID          pgtype.Int8
+	RemedyName        pgtype.Text
+	RemedyDescription pgtype.Text
+	RemedyNotes       pgtype.Text
+}
+
+func (q *Queries) GetCausesWithRemediesByIDs(ctx context.Context, dollar_1 []int64) ([]GetCausesWithRemediesByIDsRow, error) {
+	rows, err := q.db.Query(ctx, getCausesWithRemediesByIDs, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCausesWithRemediesByIDsRow
+	for rows.Next() {
+		var i GetCausesWithRemediesByIDsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Code,
+			&i.Name,
+			&i.Type,
+			&i.Prior,
+			&i.Description,
+			&i.RemedyID,
+			&i.RemedyName,
+			&i.RemedyDescription,
+			&i.RemedyNotes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateCause = `-- name: UpdateCause :one
 UPDATE causes 
 SET code = $1,

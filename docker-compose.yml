@@ -21,11 +21,23 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./migrations:/migrations
+      - ./db/migrations:/migrations
     command:
       - "-path=/migrations"
       - "-database=postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable"
       - "up"
+
+  seed:
+    image: postgres:16
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ./db/init/seed.sql:/seed.sql
+    command:
+      - "sh"
+      - "-c"
+      - "COUNT=$$(psql postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable -tAc 'SELECT count(*) FROM remedies'); if [ \"$$COUNT\" = \"0\" ]; then psql postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable -f /seed.sql; else echo 'already seeded'; fi"
 
 volumes:
   pgdata:      

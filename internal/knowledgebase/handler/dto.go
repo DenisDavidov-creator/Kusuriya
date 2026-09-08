@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx"
 	"fmt"
 )
 
@@ -40,7 +41,7 @@ func (r CreateCauseRequest) Validate() ([]string, error) {
 		problems = append(problems, "prior out of range (0,1]")
 	}
 	if len(problems) != 0 {
-		return problems, ErrValidation
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -101,7 +102,7 @@ func (r UpdateCauseRequest) Validate() ([]string, error) {
 		problems = append(problems, "prior out of range (0,1]")
 	}
 	if len(problems) != 0 {
-		return problems, ErrValidation
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -146,7 +147,7 @@ func (r *CreateRemedyRequest) Validate() ([]string, error) {
 		problems = append(problems, "name is empty")
 	}
 	if len(problems) != 0 {
-		return problems, ErrValidation
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -190,7 +191,7 @@ func (r CreateFactorRequest) Validate() ([]string, error) {
 		problems = append(problems, "name is empty")
 	}
 	if len(problems) != 0 {
-		return problems, ErrValidation
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -235,7 +236,7 @@ func (r CreateCategoryRequest) Validate() ([]string, error) {
 		problems = append(problems, "name is empty")
 	}
 	if len(problems) != 0 {
-		return problems, ErrValidation
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -288,7 +289,7 @@ func (r CreateSymptomRequest) Validate() ([]string, error) {
 		problems = append(problems, "category is empty")
 	}
 	if len(problems) != 0 {
-		return problems, ErrValidation
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -352,7 +353,7 @@ func (rs CreateSymptomsProfileRequests) Validate() ([]string, error) {
 			problems = append(problems, fmt.Sprintf("%d: likelihood is empty", r.SymptomID))
 		}
 		if len(problems) != 0 {
-			return problems, ErrValidation
+			return problems, httpx.ErrValidation
 		}
 	}
 	return nil, nil
@@ -411,7 +412,7 @@ func (rs CreateFactorsProfileRequests) Validate() ([]string, error) {
 			problems = append(problems, fmt.Sprintf("%d: modifier is empty", r.FactorID))
 		}
 		if len(problems) != 0 {
-			return problems, ErrValidation
+			return problems, httpx.ErrValidation
 		}
 	}
 	return nil, nil

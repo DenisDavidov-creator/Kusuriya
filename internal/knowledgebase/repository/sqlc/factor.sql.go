@@ -83,3 +83,37 @@ func (q *Queries) GetFactors(ctx context.Context) ([]Factor, error) {
 	}
 	return items, nil
 }
+
+const getFactorsByCodes = `-- name: GetFactorsByCodes :many
+SELECT c.id, fp.modifier
+FROM factors f
+CROSS JOIN causes c 
+LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id
+WHERE f.code = ANY($1::text[])
+ORDER BY c.id
+`
+
+type GetFactorsByCodesRow struct {
+	ID       int64
+	Modifier pgtype.Numeric
+}
+
+func (q *Queries) GetFactorsByCodes(ctx context.Context, dollar_1 []string) ([]GetFactorsByCodesRow, error) {
+	rows, err := q.db.Query(ctx, getFactorsByCodes, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetFactorsByCodesRow
+	for rows.Next() {
+		var i GetFactorsByCodesRow
+		if err := rows.Scan(&i.ID, &i.Modifier); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
