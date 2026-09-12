@@ -62,3 +62,23 @@ func EngineCause(causeDoms []Cause, factors []FactorEvidence, symptoms []Symptom
 
 	return sortedScores
 }
+
+func CombineCausesWithScores(scores []SortedDiagnose, causes []CauseWithRemedy) []DiagnosisResponse {
+	var causesMap = make(map[int64]CauseWithRemedy, len(causes))
+	for _, value := range causes {
+		causesMap[value.ID] = value
+	}
+
+	var finalScores = make([]DiagnosisResponse, 0, len(causes))
+	for _, value := range scores {
+		cause, ok := causesMap[value.CauseID]
+		if ok {
+			score := DiagnosisResponse{
+				P:               value.P,
+				CauseWithRemedy: cause,
+			}
+			finalScores = append(finalScores, score)
+		}
+	}
+	return finalScores
+}

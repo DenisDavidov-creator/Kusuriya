@@ -1,4 +1,4 @@
-package repository
+package dbx
 
 import (
 	"Kusuriya/internal/domain"
@@ -17,6 +17,8 @@ func MapPgError(err error) error {
 		switch pgErr.Code {
 		case "23505":
 			return domain.ErrDuplicateCode
+		case "23514":
+			return domain.ErrCheckPass
 		}
 	}
 	return err

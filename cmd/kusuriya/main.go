@@ -1,10 +1,13 @@
 package main
 
 import (
+	hch "Kusuriya/internal/cases/handler"
+	rcr "Kusuriya/internal/cases/repository"
+	scs "Kusuriya/internal/cases/service"
 	hdh "Kusuriya/internal/diagnose/handler"
 	sds "Kusuriya/internal/diagnose/service"
 	hkh "Kusuriya/internal/knowledgebase/handler"
-	"Kusuriya/internal/knowledgebase/repository"
+	rkr "Kusuriya/internal/knowledgebase/repository"
 	sks "Kusuriya/internal/knowledgebase/service"
 	"Kusuriya/internal/logger"
 	"context"
@@ -29,13 +32,16 @@ func main() {
 	pool := ConntectToDB()
 	defer pool.Close()
 
-	rk := repository.NewKnowledgebaseRepository(pool)
+	rk := rkr.NewKnowledgebaseRepository(pool)
+	rc := rcr.NewCaseRepository(pool)
 
 	sk := sks.NewKnowledgebaseService(rk)
 	sd := sds.NewDiagnoseService(rk)
+	sc := scs.NewCaseService(rc, rk)
 
 	hk := hkh.NewKnowledgebaseHandler(sk)
 	hd := hdh.NewDiagnoseHandler(sd)
+	hc := hch.NewCaseHandler(sc)
 
 	r.Post("/cause", hk.CreateCause)
 	r.Get("/cause/{id}", hk.GetCauseByID)
@@ -63,6 +69,13 @@ func main() {
 	r.Get("/symptom", hk.GetSymptoms)
 
 	r.Post("/diagnose", hd.DeterminDiagnose)
+
+	r.Post("/case", hc.CreateCase)
+	r.Get("/case/{id}", hc.GetCaseByID)
+	r.Patch("/case/{id}/close", hc.CloseCaseByID)
+	r.Post("/case/{id}/observation", hc.CreateObservation)
+	r.Get("/case/{id}/observation", hc.GetObservationByID)
+
 	log.Info("starting server", "port", 8080)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {

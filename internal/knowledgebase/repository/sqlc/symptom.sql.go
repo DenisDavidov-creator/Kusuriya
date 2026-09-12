@@ -126,3 +126,37 @@ func (q *Queries) GetSymptomsByCodes(ctx context.Context, dollar_1 []string) ([]
 	}
 	return items, nil
 }
+
+const getSymptomsByIDs = `-- name: GetSymptomsByIDs :many
+SELECT c.id, sp.likelihood
+FROM symptoms s
+CROSS JOIN causes c 
+LEFT JOIN symptom_profiles AS sp ON s.id = sp.symptom_id AND c.id = sp.cause_id
+WHERE s.id = ANY($1::bigint[])
+ORDER BY c.id
+`
+
+type GetSymptomsByIDsRow struct {
+	ID         int64
+	Likelihood pgtype.Numeric
+}
+
+func (q *Queries) GetSymptomsByIDs(ctx context.Context, dollar_1 []int64) ([]GetSymptomsByIDsRow, error) {
+	rows, err := q.db.Query(ctx, getSymptomsByIDs, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetSymptomsByIDsRow
+	for rows.Next() {
+		var i GetSymptomsByIDsRow
+		if err := rows.Scan(&i.ID, &i.Likelihood); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

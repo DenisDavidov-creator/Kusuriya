@@ -43,22 +43,7 @@ func (s *DiagnoseService) DeterminDiagnose(ctx context.Context, dom domain.Diagn
 		return nil, err
 	}
 
-	var causesMap = make(map[int64]domain.CauseWithRemedy, len(causes))
-	for _, value := range causes {
-		causesMap[value.ID] = value
-	}
-
-	var finalScores = make([]domain.DiagnosisResponse, 0, len(causes))
-	for _, value := range scores {
-		cause, ok := causesMap[value.CauseID]
-		if ok {
-			score := domain.DiagnosisResponse{
-				P:               value.P,
-				CauseWithRemedy: cause,
-			}
-			finalScores = append(finalScores, score)
-		}
-	}
+	finalScores := domain.CombineCausesWithScores(scores, causes)
 
 	return finalScores, nil
 }

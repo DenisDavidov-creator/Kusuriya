@@ -20,3 +20,11 @@ CROSS JOIN causes c
 LEFT JOIN symptom_profiles AS sp ON s.id = sp.symptom_id AND c.id = sp.cause_id
 WHERE s.code = ANY($1::text[])
 ORDER BY c.id;
+
+-- name: GetSymptomsByIDs :many 
+SELECT c.id, sp.likelihood
+FROM symptoms s
+CROSS JOIN causes c 
+LEFT JOIN symptom_profiles AS sp ON s.id = sp.symptom_id AND c.id = sp.cause_id
+WHERE s.id = ANY($1::bigint[])
+ORDER BY c.id;

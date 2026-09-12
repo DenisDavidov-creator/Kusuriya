@@ -20,3 +20,11 @@ CROSS JOIN causes c
 LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id
 WHERE f.code = ANY($1::text[])
 ORDER BY c.id;
+
+-- name: GetFactorsByIDs :many 
+SELECT c.id, fp.modifier
+FROM factors f
+CROSS JOIN causes c 
+LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id
+WHERE f.id = ANY($1::bigint[])
+ORDER BY c.id;

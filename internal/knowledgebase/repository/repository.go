@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"Kusuriya/internal/dbx"
 	"Kusuriya/internal/domain"
 	sqlcgen "Kusuriya/internal/knowledgebase/repository/sqlc"
 	"context"
@@ -45,7 +46,7 @@ func (r *KnowledgebaseRepository) Commit(ctx context.Context) error {
 		}
 		return nil
 	}
-	return ErrTransaction
+	return dbx.ErrTransaction
 }
 
 func (r *KnowledgebaseRepository) Rollback(ctx context.Context) error {
@@ -57,7 +58,7 @@ func (r *KnowledgebaseRepository) Rollback(ctx context.Context) error {
 		}
 		return nil
 	}
-	return ErrTransaction
+	return dbx.ErrTransaction
 }
 
 func (r *KnowledgebaseRepository) txOrNot(ctx context.Context) *sqlcgen.Queries {
@@ -91,7 +92,7 @@ func (r *KnowledgebaseRepository) CreateCause(ctx context.Context, d domain.Caus
 	result, err := r.queries.CreateCause(ctx, params)
 
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 
 	dom := &domain.Cause{
@@ -115,7 +116,7 @@ func (r *KnowledgebaseRepository) CreateCause(ctx context.Context, d domain.Caus
 func (r *KnowledgebaseRepository) GetCauseByID(ctx context.Context, id int) (*domain.Cause, error) {
 	result, err := r.queries.GetCauseByID(ctx, int64(id))
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Cause{
 		ID:    result.ID,
@@ -137,7 +138,7 @@ func (r *KnowledgebaseRepository) GetCauseByID(ctx context.Context, id int) (*do
 func (r *KnowledgebaseRepository) GetCauses(ctx context.Context) ([]domain.Cause, error) {
 	results, err := r.queries.GetCauses(ctx)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	doms := make([]domain.Cause, 0, len(results))
 
@@ -180,7 +181,7 @@ func (r *KnowledgebaseRepository) UpdateCause(ctx context.Context, d domain.Caus
 
 	result, err := r.queries.UpdateCause(ctx, params)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Cause{
 		ID:    result.ID,
@@ -203,7 +204,7 @@ func (r *KnowledgebaseRepository) UpdateCause(ctx context.Context, d domain.Caus
 func (r *KnowledgebaseRepository) DeleteCause(ctx context.Context, id int) error {
 	err := r.queries.DeleteCause(ctx, int64(id))
 	if err != nil {
-		return MapPgError(err)
+		return dbx.MapPgError(err)
 	}
 	return nil
 }
@@ -223,7 +224,7 @@ func (r *KnowledgebaseRepository) CreateRemedy(ctx context.Context, d domain.Rem
 
 	result, err := r.queries.CreateRemedy(ctx, params)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Remedy{
 		ID:   result.ID,
@@ -242,7 +243,7 @@ func (r *KnowledgebaseRepository) CreateRemedy(ctx context.Context, d domain.Rem
 func (r *KnowledgebaseRepository) GetCausesWithRemediesByIDs(ctx context.Context, IDs []int64) ([]domain.CauseWithRemedy, error) {
 	results, err := r.queries.GetCausesWithRemediesByIDs(ctx, IDs)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	var doms = make([]domain.CauseWithRemedy, 0, len(results))
 	for _, result := range results {
@@ -280,7 +281,7 @@ func (r *KnowledgebaseRepository) GetCausesWithRemediesByIDs(ctx context.Context
 func (r *KnowledgebaseRepository) GetRemedyByID(ctx context.Context, id int) (*domain.Remedy, error) {
 	result, err := r.queries.GetRemedyByID(ctx, int64(id))
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Remedy{
 		ID:   result.ID,
@@ -298,7 +299,7 @@ func (r *KnowledgebaseRepository) GetRemedyByID(ctx context.Context, id int) (*d
 func (r *KnowledgebaseRepository) GetRemedies(ctx context.Context) ([]domain.Remedy, error) {
 	result, err := r.queries.GetRemedies(ctx)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 
 	doms := make([]domain.Remedy, 0, len(result))
@@ -330,7 +331,7 @@ func (r *KnowledgebaseRepository) CreateFactor(ctx context.Context, d domain.Fac
 
 	result, err := r.queries.CreateFactor(ctx, params)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Factor{
 		ID:   result.ID,
@@ -346,7 +347,7 @@ func (r *KnowledgebaseRepository) CreateFactor(ctx context.Context, d domain.Fac
 func (r *KnowledgebaseRepository) GetFactorByID(ctx context.Context, id int) (*domain.Factor, error) {
 	result, err := r.queries.GetFactorByID(ctx, int64(id))
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Factor{
 		ID:   result.ID,
@@ -363,7 +364,7 @@ func (r *KnowledgebaseRepository) GetFactorByID(ctx context.Context, id int) (*d
 func (r *KnowledgebaseRepository) GetFactors(ctx context.Context) ([]domain.Factor, error) {
 	result, err := r.queries.GetFactors(ctx)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 
 	doms := make([]domain.Factor, 0, len(result))
@@ -386,7 +387,7 @@ func (r *KnowledgebaseRepository) CreateCategory(ctx context.Context, d domain.C
 
 	result, err := r.queries.CreateCategory(ctx, d.Name)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Category{
 		ID:   result.ID,
@@ -398,7 +399,7 @@ func (r *KnowledgebaseRepository) CreateCategory(ctx context.Context, d domain.C
 func (r *KnowledgebaseRepository) GetCategoryByID(ctx context.Context, id int) (*domain.Category, error) {
 	result, err := r.queries.GetCategoryByID(ctx, int64(id))
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Category{
 		ID:   result.ID,
@@ -410,7 +411,7 @@ func (r *KnowledgebaseRepository) GetCategoryByID(ctx context.Context, id int) (
 func (r *KnowledgebaseRepository) GetCategories(ctx context.Context) ([]domain.Category, error) {
 	result, err := r.queries.GetCategories(ctx)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	doms := make([]domain.Category, 0, len(result))
 	for _, result := range result {
@@ -438,7 +439,7 @@ func (r *KnowledgebaseRepository) CreateSymptom(ctx context.Context, d domain.Sy
 
 	result, err := r.queries.CreateSymptom(ctx, params)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Symptom{
 		ID:         result.ID,
@@ -455,7 +456,7 @@ func (r *KnowledgebaseRepository) CreateSymptom(ctx context.Context, d domain.Sy
 func (r *KnowledgebaseRepository) GetSymptomByID(ctx context.Context, id int) (*domain.Symptom, error) {
 	result, err := r.queries.GetSymptomByID(ctx, int64(id))
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	dom := &domain.Symptom{
 		ID:         result.ID,
@@ -472,7 +473,7 @@ func (r *KnowledgebaseRepository) GetSymptomByID(ctx context.Context, id int) (*
 func (r *KnowledgebaseRepository) GetSymptoms(ctx context.Context) ([]domain.Symptom, error) {
 	result, err := r.queries.GetSymptoms(ctx)
 	if err != nil {
-		return nil, MapPgError(err)
+		return nil, dbx.MapPgError(err)
 	}
 	doms := make([]domain.Symptom, 0, len(result))
 	for _, result := range result {
@@ -499,7 +500,7 @@ func (r *KnowledgebaseRepository) CreateSymptomProfiles(ctx context.Context, ds 
 		like := strconv.FormatFloat(d.Likelihood, 'f', -1, 64)
 		err := likelihood.Scan(like)
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 
 		params := sqlcgen.CreateSymptomProfilesParams{
@@ -509,7 +510,7 @@ func (r *KnowledgebaseRepository) CreateSymptomProfiles(ctx context.Context, ds 
 		}
 		result, err := pool.CreateSymptomProfiles(ctx, params)
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 		dom := domain.SymptomProfile{
 			ID:        result.ID,
@@ -518,7 +519,7 @@ func (r *KnowledgebaseRepository) CreateSymptomProfiles(ctx context.Context, ds 
 		}
 		l, err := result.Likelihood.Float64Value()
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 		if l.Valid {
 			dom.Likelihood = l.Float64
@@ -546,7 +547,7 @@ func (r *KnowledgebaseRepository) CreateFactorProfiles(ctx context.Context, ds [
 		mod := strconv.FormatFloat(d.Modifier, 'f', -1, 64)
 		err := modifier.Scan(mod)
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 
 		params := sqlcgen.CreateFactorProfilesParams{
@@ -556,7 +557,7 @@ func (r *KnowledgebaseRepository) CreateFactorProfiles(ctx context.Context, ds [
 		}
 		result, err := pool.CreateFactorProfiles(ctx, params)
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 		dom := domain.FactorProfile{
 			ID:       result.ID,
@@ -565,7 +566,7 @@ func (r *KnowledgebaseRepository) CreateFactorProfiles(ctx context.Context, ds [
 		}
 		l, err := result.Modifier.Float64Value()
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 		if l.Valid {
 			dom.Modifier = l.Float64
@@ -597,7 +598,7 @@ func (r *KnowledgebaseRepository) GetFactorsByCodes(ctx context.Context, codes [
 		}
 		l, err := result.Modifier.Float64Value()
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 		if l.Valid {
 			m := l.Float64
@@ -622,13 +623,63 @@ func (r *KnowledgebaseRepository) GetSymptomsByCodes(ctx context.Context, codes 
 		}
 		l, err := result.Likelihood.Float64Value()
 		if err != nil {
-			return nil, MapPgError(err)
+			return nil, dbx.MapPgError(err)
 		}
 		if l.Valid {
 			lh := l.Float64
 			dom.Likelihood = &lh
 		} else {
 			dom.Likelihood = nil
+		}
+		doms = append(doms, dom)
+	}
+	return doms, nil
+}
+
+func (r *KnowledgebaseRepository) GetSymptomsByIDs(ctx context.Context, IDs []int64) ([]domain.SymptomEvidence, error) {
+	results, err := r.queries.GetSymptomsByIDs(ctx, IDs)
+	if err != nil {
+		return nil, err
+	}
+	var doms []domain.SymptomEvidence
+	for _, result := range results {
+		dom := domain.SymptomEvidence{
+			CauseID: result.ID,
+		}
+		l, err := result.Likelihood.Float64Value()
+		if err != nil {
+			return nil, dbx.MapPgError(err)
+		}
+		if l.Valid {
+			lh := l.Float64
+			dom.Likelihood = &lh
+		} else {
+			dom.Likelihood = nil
+		}
+		doms = append(doms, dom)
+	}
+	return doms, nil
+}
+
+func (r *KnowledgebaseRepository) GetFactorsByIDs(ctx context.Context, IDs []int64) ([]domain.FactorEvidence, error) {
+	results, err := r.queries.GetFactorsByIDs(ctx, IDs)
+	if err != nil {
+		return nil, err
+	}
+	var doms []domain.FactorEvidence
+	for _, result := range results {
+		dom := domain.FactorEvidence{
+			CauseID: result.ID,
+		}
+		l, err := result.Modifier.Float64Value()
+		if err != nil {
+			return nil, dbx.MapPgError(err)
+		}
+		if l.Valid {
+			m := l.Float64
+			dom.Modifier = &m
+		} else {
+			dom.Modifier = nil
 		}
 		doms = append(doms, dom)
 	}
