@@ -406,7 +406,7 @@ func (rs CreateFactorsProfileRequests) Validate() ([]string, error) {
 	for _, r := range rs.Profiles {
 
 		if r.FactorID == 0 {
-			problems = append(problems, fmt.Sprintf("%d: Factor_id is empty", r.FactorID))
+			problems = append(problems, fmt.Sprintf("%d: factor_id is empty", r.FactorID))
 		}
 		if r.Modifier > 1 || r.Modifier <= 0 {
 			problems = append(problems, fmt.Sprintf("%d: modifier is empty", r.FactorID))

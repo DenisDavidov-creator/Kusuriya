@@ -319,7 +319,7 @@ func (h *KnowledgebaseHandler) CreateSymptomProfiles(w http.ResponseWriter, r *h
 		httpx.RespondError(w, r, err, "")
 		return
 	}
-	httpx.WriteJSON(w, http.StatusOK, doms)
+	httpx.WriteJSON(w, http.StatusOK, DomainsToSymptomsProfiles(doms))
 }
 
 func (h *KnowledgebaseHandler) CreateFactorProfiles(w http.ResponseWriter, r *http.Request) {
@@ -345,5 +345,5 @@ func (h *KnowledgebaseHandler) CreateFactorProfiles(w http.ResponseWriter, r *ht
 		httpx.RespondError(w, r, err, "")
 		return
 	}
-	httpx.WriteJSON(w, http.StatusOK, doms)
+	httpx.WriteJSON(w, http.StatusOK, DomainsToFactorsProfiles(doms))
 }

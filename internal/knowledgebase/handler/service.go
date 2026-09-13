@@ -5,6 +5,7 @@ import (
 	"context"
 )
 
+//go:generate mockery --name=KnowledgebaseServiceInterface
 type KnowledgebaseServiceInterface interface {
 	CreateCause(context.Context, domain.Cause) (*domain.Cause, error)
 	GetCauseByID(context.Context, int) (*domain.Cause, error)

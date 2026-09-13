@@ -126,7 +126,7 @@ func (r *CaseRepository) GetObservationByID(ctx context.Context, id int) ([]doma
 		return nil, dbx.MapPgError(err)
 	}
 
-	var doms []domain.Observation
+	var doms = make([]domain.Observation, 0, len(results))
 	for _, result := range results {
 		dom := domain.Observation{
 			ID:         result.ID,

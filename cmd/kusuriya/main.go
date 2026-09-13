@@ -68,7 +68,7 @@ func main() {
 	r.Get("/symptom/{id}", hk.GetSymptomByID)
 	r.Get("/symptom", hk.GetSymptoms)
 
-	r.Post("/diagnose", hd.DeterminDiagnose)
+	r.Post("/diagnose", hd.DetermineDiagnose)
 
 	r.Post("/case", hc.CreateCase)
 	r.Get("/case/{id}", hc.GetCaseByID)

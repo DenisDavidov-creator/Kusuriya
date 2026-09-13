@@ -5,6 +5,7 @@ import (
 	"context"
 )
 
+//go:generate mockery --name=DiagnoseServiceInterface
 type DiagnoseServiceInterface interface {
-	DeterminDiagnose(context.Context, domain.DiagnosisRequest) ([]domain.DiagnosisResponse, error)
+	DetermineDiagnose(context.Context, domain.DiagnosisRequest) ([]domain.DiagnosisResponse, error)
 }

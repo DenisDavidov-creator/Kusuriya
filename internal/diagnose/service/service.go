@@ -13,7 +13,7 @@ func NewDiagnoseService(repo KnowledgebaseRepositoryInterface) *DiagnoseService 
 	return &DiagnoseService{repo: repo}
 }
 
-func (s *DiagnoseService) DeterminDiagnose(ctx context.Context, dom domain.DiagnosisRequest) ([]domain.DiagnosisResponse, error) {
+func (s *DiagnoseService) DetermineDiagnose(ctx context.Context, dom domain.DiagnosisRequest) ([]domain.DiagnosisResponse, error) {
 	causeDoms, err := s.repo.GetCauses(ctx)
 
 	if err != nil {
