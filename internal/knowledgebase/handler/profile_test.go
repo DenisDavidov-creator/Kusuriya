@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx/httptestx"
 	"Kusuriya/internal/knowledgebase/handler/mocks"
 	"net/http"
 	"testing"
@@ -79,11 +80,11 @@ func TestCreateSymptomProfiles(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateSymptomProfiles, http.MethodPost, tt.id, tt.body)
+			rec := httptestx.DoRequest(h.CreateSymptomProfiles, http.MethodPost, tt.id, tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, tt.wantBody, decodeBody[[]SymptomProfileResponse](t, rec))
+				assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]SymptomProfileResponse](t, rec))
 			}
 		})
 	}
@@ -158,11 +159,11 @@ func TestCreateFactorProfiles(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateFactorProfiles, http.MethodPost, tt.id, tt.body)
+			rec := httptestx.DoRequest(h.CreateFactorProfiles, http.MethodPost, tt.id, tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, tt.wantBody, decodeBody[[]FactorProfileResponse](t, rec))
+				assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]FactorProfileResponse](t, rec))
 			}
 		})
 	}

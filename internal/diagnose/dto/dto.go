@@ -1,4 +1,4 @@
-package handler
+package dto
 
 import (
 	"Kusuriya/internal/domain"
@@ -25,8 +25,32 @@ func (r DetermineDiagnoseRequest) Validate() error {
 }
 
 type DetermineDiagnoseResponse struct {
-	P     float64       `json:"p"`
-	Cause CauseResponse `json:"cause"`
+	P        float64       `json:"p"`
+	Cause    CauseResponse `json:"cause"`
+	Evidence []Evidence    `json:"evidence"`
+}
+
+type Evidence struct {
+	Kind    string   `json:"kind"`
+	KindID  int64    `json:"kind_id"`
+	Code    string   `json:"code"`
+	Weight  *float64 `json:"weight"`
+	Matched bool     `json:"matched"`
+}
+
+func DomainToEvidence(d []domain.Contribution) []Evidence {
+	var evidence = make([]Evidence, 0, len(d))
+	for _, e := range d {
+		ev := Evidence{
+			Kind:    e.Kind,
+			KindID:  e.KindID,
+			Code:    e.Code,
+			Weight:  e.Weight,
+			Matched: e.Matched,
+		}
+		evidence = append(evidence, ev)
+	}
+	return evidence
 }
 
 type CauseResponse struct {
@@ -61,8 +85,9 @@ func DomainsToDetermineDiagnose(doms []domain.DiagnosisResponse) []DetermineDiag
 	var results = make([]DetermineDiagnoseResponse, 0, len(doms))
 	for _, dom := range doms {
 		result := DetermineDiagnoseResponse{
-			P:     dom.P,
-			Cause: DomainToCauseWithRemedy(&dom.CauseWithRemedy),
+			P:        dom.P,
+			Cause:    DomainToCauseWithRemedy(&dom.CauseWithRemedy),
+			Evidence: DomainToEvidence(dom.Evidence),
 		}
 		results = append(results, result)
 	}

@@ -85,7 +85,7 @@ func (q *Queries) GetFactors(ctx context.Context) ([]Factor, error) {
 }
 
 const getFactorsByCodes = `-- name: GetFactorsByCodes :many
-SELECT c.id, fp.modifier
+SELECT c.id, f.id AS factor_id, f.code AS factor_code, fp.modifier
 FROM factors f
 CROSS JOIN causes c 
 LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id
@@ -94,8 +94,10 @@ ORDER BY c.id
 `
 
 type GetFactorsByCodesRow struct {
-	ID       int64
-	Modifier pgtype.Numeric
+	ID         int64
+	FactorID   int64
+	FactorCode string
+	Modifier   pgtype.Numeric
 }
 
 func (q *Queries) GetFactorsByCodes(ctx context.Context, dollar_1 []string) ([]GetFactorsByCodesRow, error) {
@@ -107,7 +109,12 @@ func (q *Queries) GetFactorsByCodes(ctx context.Context, dollar_1 []string) ([]G
 	var items []GetFactorsByCodesRow
 	for rows.Next() {
 		var i GetFactorsByCodesRow
-		if err := rows.Scan(&i.ID, &i.Modifier); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.FactorID,
+			&i.FactorCode,
+			&i.Modifier,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -119,7 +126,7 @@ func (q *Queries) GetFactorsByCodes(ctx context.Context, dollar_1 []string) ([]G
 }
 
 const getFactorsByIDs = `-- name: GetFactorsByIDs :many
-SELECT c.id, fp.modifier
+SELECT c.id, f.id AS factor_id, f.code AS factor_code, fp.modifier
 FROM factors f
 CROSS JOIN causes c 
 LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id
@@ -128,8 +135,10 @@ ORDER BY c.id
 `
 
 type GetFactorsByIDsRow struct {
-	ID       int64
-	Modifier pgtype.Numeric
+	ID         int64
+	FactorID   int64
+	FactorCode string
+	Modifier   pgtype.Numeric
 }
 
 func (q *Queries) GetFactorsByIDs(ctx context.Context, dollar_1 []int64) ([]GetFactorsByIDsRow, error) {
@@ -141,7 +150,12 @@ func (q *Queries) GetFactorsByIDs(ctx context.Context, dollar_1 []int64) ([]GetF
 	var items []GetFactorsByIDsRow
 	for rows.Next() {
 		var i GetFactorsByIDsRow
-		if err := rows.Scan(&i.ID, &i.Modifier); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.FactorID,
+			&i.FactorCode,
+			&i.Modifier,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

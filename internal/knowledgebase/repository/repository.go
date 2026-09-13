@@ -594,7 +594,9 @@ func (r *KnowledgebaseRepository) GetFactorsByCodes(ctx context.Context, codes [
 	var doms []domain.FactorEvidence
 	for _, result := range results {
 		dom := domain.FactorEvidence{
-			CauseID: result.ID,
+			CauseID:    result.ID,
+			FactorID:   result.FactorID,
+			FactorCode: result.FactorCode,
 		}
 		l, err := result.Modifier.Float64Value()
 		if err != nil {
@@ -619,7 +621,9 @@ func (r *KnowledgebaseRepository) GetSymptomsByCodes(ctx context.Context, codes 
 	var doms []domain.SymptomEvidence
 	for _, result := range results {
 		dom := domain.SymptomEvidence{
-			CauseID: result.ID,
+			CauseID:     result.ID,
+			SymptomID:   result.SymptomID,
+			SymptomCode: result.SymptomCode,
 		}
 		l, err := result.Likelihood.Float64Value()
 		if err != nil {
@@ -644,7 +648,9 @@ func (r *KnowledgebaseRepository) GetSymptomsByIDs(ctx context.Context, IDs []in
 	var doms []domain.SymptomEvidence
 	for _, result := range results {
 		dom := domain.SymptomEvidence{
-			CauseID: result.ID,
+			CauseID:     result.ID,
+			SymptomID:   result.SymptomID,
+			SymptomCode: result.SymptomCode,
 		}
 		l, err := result.Likelihood.Float64Value()
 		if err != nil {
@@ -669,7 +675,9 @@ func (r *KnowledgebaseRepository) GetFactorsByIDs(ctx context.Context, IDs []int
 	var doms []domain.FactorEvidence
 	for _, result := range results {
 		dom := domain.FactorEvidence{
-			CauseID: result.ID,
+			CauseID:    result.ID,
+			FactorID:   result.FactorID,
+			FactorCode: result.FactorCode,
 		}
 		l, err := result.Modifier.Float64Value()
 		if err != nil {

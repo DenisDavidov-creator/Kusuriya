@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx/httptestx"
 	"Kusuriya/internal/knowledgebase/handler/mocks"
 	"net/http"
 	"strings"
@@ -62,11 +63,11 @@ func TestCreateFactor(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateFactor, http.MethodPost, "", tt.body)
+			rec := httptestx.DoRequest(h.CreateFactor, http.MethodPost, "", tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[FactorResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[FactorResponse](t, rec))
 			}
 		})
 	}
@@ -111,11 +112,11 @@ func TestGetFactorByID(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetFactorByID, http.MethodGet, tt.id, "")
+			rec := httptestx.DoRequest(h.GetFactorByID, http.MethodGet, tt.id, "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[FactorResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[FactorResponse](t, rec))
 			}
 		})
 	}
@@ -154,11 +155,11 @@ func TestGetFactors(t *testing.T) {
 			tt.setupMock(mockService)
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetFactors, http.MethodGet, "", "")
+			rec := httptestx.DoRequest(h.GetFactors, http.MethodGet, "", "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			raw := strings.TrimSpace(rec.Body.String())
-			assert.Equal(t, tt.wantBody, decodeBody[[]FactorResponse](t, rec))
+			assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]FactorResponse](t, rec))
 			if len(tt.wantBody) == 0 {
 				assert.Equal(t, "[]", raw)
 			}

@@ -94,7 +94,7 @@ func (q *Queries) GetSymptoms(ctx context.Context) ([]Symptom, error) {
 }
 
 const getSymptomsByCodes = `-- name: GetSymptomsByCodes :many
-SELECT c.id, sp.likelihood
+SELECT c.id, s.id AS symptom_id, s.code AS symptom_code,sp.likelihood  
 FROM symptoms s
 CROSS JOIN causes c 
 LEFT JOIN symptom_profiles AS sp ON s.id = sp.symptom_id AND c.id = sp.cause_id
@@ -103,8 +103,10 @@ ORDER BY c.id
 `
 
 type GetSymptomsByCodesRow struct {
-	ID         int64
-	Likelihood pgtype.Numeric
+	ID          int64
+	SymptomID   int64
+	SymptomCode string
+	Likelihood  pgtype.Numeric
 }
 
 func (q *Queries) GetSymptomsByCodes(ctx context.Context, dollar_1 []string) ([]GetSymptomsByCodesRow, error) {
@@ -116,7 +118,12 @@ func (q *Queries) GetSymptomsByCodes(ctx context.Context, dollar_1 []string) ([]
 	var items []GetSymptomsByCodesRow
 	for rows.Next() {
 		var i GetSymptomsByCodesRow
-		if err := rows.Scan(&i.ID, &i.Likelihood); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.SymptomID,
+			&i.SymptomCode,
+			&i.Likelihood,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -128,7 +135,7 @@ func (q *Queries) GetSymptomsByCodes(ctx context.Context, dollar_1 []string) ([]
 }
 
 const getSymptomsByIDs = `-- name: GetSymptomsByIDs :many
-SELECT c.id, sp.likelihood
+SELECT c.id, s.id AS symptom_id, s.code AS symptom_code,sp.likelihood  
 FROM symptoms s
 CROSS JOIN causes c 
 LEFT JOIN symptom_profiles AS sp ON s.id = sp.symptom_id AND c.id = sp.cause_id
@@ -137,8 +144,10 @@ ORDER BY c.id
 `
 
 type GetSymptomsByIDsRow struct {
-	ID         int64
-	Likelihood pgtype.Numeric
+	ID          int64
+	SymptomID   int64
+	SymptomCode string
+	Likelihood  pgtype.Numeric
 }
 
 func (q *Queries) GetSymptomsByIDs(ctx context.Context, dollar_1 []int64) ([]GetSymptomsByIDsRow, error) {
@@ -150,7 +159,12 @@ func (q *Queries) GetSymptomsByIDs(ctx context.Context, dollar_1 []int64) ([]Get
 	var items []GetSymptomsByIDsRow
 	for rows.Next() {
 		var i GetSymptomsByIDsRow
-		if err := rows.Scan(&i.ID, &i.Likelihood); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.SymptomID,
+			&i.SymptomCode,
+			&i.Likelihood,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

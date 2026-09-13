@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx/httptestx"
 	"Kusuriya/internal/knowledgebase/handler/mocks"
 	"net/http"
 	"strings"
@@ -53,11 +54,11 @@ func TestCreateCategory(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateCategory, http.MethodPost, "", tt.body)
+			rec := httptestx.DoRequest(h.CreateCategory, http.MethodPost, "", tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[CategoryResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[CategoryResponse](t, rec))
 			}
 		})
 	}
@@ -102,11 +103,11 @@ func TestGetCategoryByID(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetCategoryByID, http.MethodGet, tt.id, "")
+			rec := httptestx.DoRequest(h.GetCategoryByID, http.MethodGet, tt.id, "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[CategoryResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[CategoryResponse](t, rec))
 			}
 		})
 	}
@@ -145,11 +146,11 @@ func TestGetCategories(t *testing.T) {
 			tt.setupMock(mockService)
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetCategories, http.MethodGet, "", "")
+			rec := httptestx.DoRequest(h.GetCategories, http.MethodGet, "", "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			raw := strings.TrimSpace(rec.Body.String())
-			assert.Equal(t, tt.wantBody, decodeBody[[]CategoryResponse](t, rec))
+			assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]CategoryResponse](t, rec))
 			if len(tt.wantBody) == 0 {
 				assert.Equal(t, "[]", raw)
 			}

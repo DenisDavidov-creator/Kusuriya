@@ -14,7 +14,7 @@ FROM factors
 ORDER BY id;
 
 -- name: GetFactorsByCodes :many 
-SELECT c.id, fp.modifier
+SELECT c.id, f.id AS factor_id, f.code AS factor_code, fp.modifier
 FROM factors f
 CROSS JOIN causes c 
 LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id
@@ -22,7 +22,7 @@ WHERE f.code = ANY($1::text[])
 ORDER BY c.id;
 
 -- name: GetFactorsByIDs :many 
-SELECT c.id, fp.modifier
+SELECT c.id, f.id AS factor_id, f.code AS factor_code, fp.modifier
 FROM factors f
 CROSS JOIN causes c 
 LEFT JOIN factor_profiles AS fp ON f.id = fp.factor_id AND c.id = fp.cause_id

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Kusuriya/internal/diagnose/dto"
 	"Kusuriya/internal/httpx"
 	"net/http"
 )
@@ -14,7 +15,7 @@ func NewDiagnoseHandler(service DiagnoseServiceInterface) *DiagnoseHandler {
 }
 
 func (h *DiagnoseHandler) DetermineDiagnose(w http.ResponseWriter, r *http.Request) {
-	var req DetermineDiagnoseRequest
+	var req dto.DetermineDiagnoseRequest
 	err := httpx.Decode(r.Body, &req)
 	if err != nil {
 		httpx.RespondError(w, r, err, err.Error())
@@ -31,5 +32,5 @@ func (h *DiagnoseHandler) DetermineDiagnose(w http.ResponseWriter, r *http.Reque
 		httpx.RespondError(w, r, err, "")
 		return
 	}
-	httpx.WriteJSON(w, http.StatusOK, DomainsToDetermineDiagnose(result))
+	httpx.WriteJSON(w, http.StatusOK, dto.DomainsToDetermineDiagnose(result))
 }

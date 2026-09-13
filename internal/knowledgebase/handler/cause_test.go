@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx/httptestx"
 	"Kusuriya/internal/knowledgebase/handler/mocks"
 	"errors"
 	"net/http"
@@ -73,11 +74,11 @@ func TestCreateCause(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateCause, http.MethodPost, "", tt.body)
+			rec := httptestx.DoRequest(h.CreateCause, http.MethodPost, "", tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[CauseResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[CauseResponse](t, rec))
 			}
 		})
 	}
@@ -122,11 +123,11 @@ func TestGetCauseByID(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetCauseByID, http.MethodGet, tt.id, "")
+			rec := httptestx.DoRequest(h.GetCauseByID, http.MethodGet, tt.id, "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[CauseResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[CauseResponse](t, rec))
 			}
 		})
 	}
@@ -169,12 +170,12 @@ func TestGetCauses(t *testing.T) {
 			tt.setupMock(mockService)
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetCauses, http.MethodGet, "", "")
+			rec := httptestx.DoRequest(h.GetCauses, http.MethodGet, "", "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
 				raw := strings.TrimSpace(rec.Body.String())
-				assert.Equal(t, tt.wantBody, decodeBody[[]CauseResponse](t, rec))
+				assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]CauseResponse](t, rec))
 				if len(tt.wantBody) == 0 {
 					assert.Equal(t, "[]", raw)
 				}
@@ -242,11 +243,11 @@ func TestUpdateCause(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.UpdateCause, http.MethodPut, tt.id, tt.body)
+			rec := httptestx.DoRequest(h.UpdateCause, http.MethodPut, tt.id, tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[CauseResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[CauseResponse](t, rec))
 			}
 		})
 	}
@@ -289,7 +290,7 @@ func TestDeleteCause(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.DeleteCause, http.MethodDelete, tt.id, "")
+			rec := httptestx.DoRequest(h.DeleteCause, http.MethodDelete, tt.id, "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 		})

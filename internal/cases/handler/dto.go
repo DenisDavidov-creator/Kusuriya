@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Kusuriya/internal/diagnose/dto"
 	"Kusuriya/internal/domain"
 	"Kusuriya/internal/httpx"
 	"time"
@@ -38,33 +39,15 @@ type CaseResponse struct {
 	Status      string `json:"status"`
 }
 
-type CauseResponse struct {
-	ID                int64   `json:"id"`
-	Code              string  `json:"code"`
-	Name              string  `json:"name"`
-	Type              string  `json:"type"`
-	Prior             float64 `json:"prior"`
-	Description       string  `json:"description"`
-	RemedyID          *int64  `json:"remedy_id"`
-	RemedyName        *string `json:"remedy_name"`
-	RemedyDescription *string `json:"remedy_description"`
-	RemedyNotes       *string `json:"remedy_notes"`
-}
-
 type CaseResponseWithDiagnoses struct {
-	Case   CaseResponse        `json:"case"`
-	Causes []DiagnisisResponse `json:"causes"`
-}
-
-type DiagnisisResponse struct {
-	P               float64       `json:"p"`
-	CauseWithRemedy CauseResponse `json:"cause"`
+	Case   CaseResponse                    `json:"case"`
+	Causes []dto.DetermineDiagnoseResponse `json:"causes"`
 }
 
 func DomainToCaseDetail(diagnoses []domain.DiagnosisResponse, caseDetail *domain.Case) CaseResponseWithDiagnoses {
 	return CaseResponseWithDiagnoses{
 		Case:   DomainToCase(caseDetail),
-		Causes: DomainsToCauses(diagnoses),
+		Causes: dto.DomainsToDetermineDiagnose(diagnoses),
 	}
 }
 
@@ -74,34 +57,6 @@ func DomainToCase(d *domain.Case) CaseResponse {
 		Title:       d.Title,
 		Description: d.Description,
 		Status:      d.Status,
-	}
-}
-
-func DomainsToCauses(doms []domain.DiagnosisResponse) []DiagnisisResponse {
-	var results = make([]DiagnisisResponse, 0, len(doms))
-	for _, dom := range doms {
-		result := DomainToCauseWithRemedy(dom)
-		results = append(results, result)
-	}
-
-	return results
-}
-
-func DomainToCauseWithRemedy(d domain.DiagnosisResponse) DiagnisisResponse {
-	return DiagnisisResponse{
-		P: d.P,
-		CauseWithRemedy: CauseResponse{
-			ID:                d.ID,
-			Code:              d.Code,
-			Name:              d.Name,
-			Type:              d.Type,
-			Prior:             d.Prior,
-			Description:       d.Description,
-			RemedyID:          d.RemedyID,
-			RemedyName:        d.RemedyName,
-			RemedyDescription: d.RemedyDescription,
-			RemedyNotes:       d.RemedyNotes,
-		},
 	}
 }
 

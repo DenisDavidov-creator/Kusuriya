@@ -5,6 +5,7 @@ import (
 	"context"
 )
 
+//go:generate mockery --name=CaseServiceInterface
 type CaseServiceInterface interface {
 	CreateCase(context.Context, domain.Case) (*domain.Case, error)
 

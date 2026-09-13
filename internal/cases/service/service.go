@@ -59,7 +59,7 @@ func (s *CaseService) GetCaseByID(ctx context.Context, id int) ([]domain.Diagnos
 		return nil, nil, err
 	}
 
-	scores := domain.EngineCause(causesAll, factors, symptom)
+	scores, contributions := domain.EngineCause(causesAll, factors, symptom)
 	if len(scores) > 5 {
 		scores = scores[:5]
 	}
@@ -74,7 +74,7 @@ func (s *CaseService) GetCaseByID(ctx context.Context, id int) ([]domain.Diagnos
 		return nil, nil, err
 	}
 
-	finalScores := domain.CombineCausesWithScores(scores, causes)
+	finalScores := domain.CombineCausesWithScores(scores, causes, contributions)
 
 	return finalScores, result, nil
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx/httptestx"
 	"Kusuriya/internal/knowledgebase/handler/mocks"
 	"net/http"
 	"strings"
@@ -54,11 +55,11 @@ func TestCreateRemedy(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateRemedy, http.MethodPost, "", tt.body)
+			rec := httptestx.DoRequest(h.CreateRemedy, http.MethodPost, "", tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[RemedyResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[RemedyResponse](t, rec))
 			}
 		})
 	}
@@ -103,11 +104,11 @@ func TestGetRemedyByID(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetRemedyByID, http.MethodGet, tt.id, "")
+			rec := httptestx.DoRequest(h.GetRemedyByID, http.MethodGet, tt.id, "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[RemedyResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[RemedyResponse](t, rec))
 			}
 		})
 	}
@@ -146,11 +147,11 @@ func TestGetRemedies(t *testing.T) {
 			tt.setupMock(mockService)
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetRemedies, http.MethodGet, "", "")
+			rec := httptestx.DoRequest(h.GetRemedies, http.MethodGet, "", "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			raw := strings.TrimSpace(rec.Body.String())
-			assert.Equal(t, tt.wantBody, decodeBody[[]RemedyResponse](t, rec))
+			assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]RemedyResponse](t, rec))
 			if len(tt.wantBody) == 0 {
 				assert.Equal(t, "[]", raw)
 			}

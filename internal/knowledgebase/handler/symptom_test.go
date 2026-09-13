@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Kusuriya/internal/domain"
+	"Kusuriya/internal/httpx/httptestx"
 	"Kusuriya/internal/knowledgebase/handler/mocks"
 	"net/http"
 	"strings"
@@ -62,11 +63,11 @@ func TestCreateSymptom(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.CreateSymptom, http.MethodPost, "", tt.body)
+			rec := httptestx.DoRequest(h.CreateSymptom, http.MethodPost, "", tt.body)
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[SymptomResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[SymptomResponse](t, rec))
 			}
 		})
 	}
@@ -111,11 +112,11 @@ func TestGetSymptomByID(t *testing.T) {
 			}
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetSymptomByID, http.MethodGet, tt.id, "")
+			rec := httptestx.DoRequest(h.GetSymptomByID, http.MethodGet, tt.id, "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			if tt.wantBody != nil {
-				assert.Equal(t, *tt.wantBody, decodeBody[SymptomResponse](t, rec))
+				assert.Equal(t, *tt.wantBody, httptestx.DecodeBody[SymptomResponse](t, rec))
 			}
 		})
 	}
@@ -154,11 +155,11 @@ func TestGetSymptoms(t *testing.T) {
 			tt.setupMock(mockService)
 			h := NewKnowledgebaseHandler(mockService)
 
-			rec := doRequest(h.GetSymptoms, http.MethodGet, "", "")
+			rec := httptestx.DoRequest(h.GetSymptoms, http.MethodGet, "", "")
 
 			assert.Equal(t, tt.wantStatus, rec.Code)
 			raw := strings.TrimSpace(rec.Body.String())
-			assert.Equal(t, tt.wantBody, decodeBody[[]SymptomResponse](t, rec))
+			assert.Equal(t, tt.wantBody, httptestx.DecodeBody[[]SymptomResponse](t, rec))
 			if len(tt.wantBody) == 0 {
 				assert.Equal(t, "[]", raw)
 			}

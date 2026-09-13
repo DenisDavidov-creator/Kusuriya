@@ -22,3 +22,27 @@ type CauseWithRemedy struct {
 	RemedyDescription *string
 	RemedyNotes       *string
 }
+
+type DiagnosisRequest struct {
+	SymptomCodes []string
+	FactorCodes  []string
+}
+
+type DiagnosisResponse struct {
+	P float64
+	CauseWithRemedy
+	Evidence []Contribution
+}
+
+type SortedDiagnose struct {
+	P       float64
+	CauseID int64
+}
+
+type Contribution struct {
+	Kind    string
+	KindID  int64
+	Code    string
+	Weight  *float64
+	Matched bool
+}

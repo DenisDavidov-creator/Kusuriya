@@ -21,8 +21,11 @@ func NewCaseHandler(service CaseServiceInterface) *CaseHandler {
 func (h *CaseHandler) CreateCase(w http.ResponseWriter, r *http.Request) {
 	var req CreateCaseRequest
 
-	httpx.Decode(r.Body, &req)
-
+	err := httpx.Decode(r.Body, &req)
+	if err != nil {
+		httpx.RespondError(w, r, err, "")
+		return
+	}
 	problmes, err := req.Validate()
 	if err != nil {
 		httpx.RespondError(w, r, err, problmes)

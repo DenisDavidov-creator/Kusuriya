@@ -28,7 +28,7 @@ func (s *DiagnoseService) DetermineDiagnose(ctx context.Context, dom domain.Diag
 		return nil, err
 	}
 
-	scores := domain.EngineCause(causeDoms, factors, symptoms)
+	scores, contributions := domain.EngineCause(causeDoms, factors, symptoms)
 	if len(scores) > 5 {
 		scores = scores[:5]
 	}
@@ -43,7 +43,7 @@ func (s *DiagnoseService) DetermineDiagnose(ctx context.Context, dom domain.Diag
 		return nil, err
 	}
 
-	finalScores := domain.CombineCausesWithScores(scores, causes)
+	finalScores := domain.CombineCausesWithScores(scores, causes, contributions)
 
 	return finalScores, nil
 }
