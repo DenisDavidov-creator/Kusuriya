@@ -95,12 +95,12 @@ func ConntectToDB() *pgxpool.Pool {
 
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		slog.Error("We can't open the pool connection", err)
+		slog.Error("We can't open the pool connection", "error", err.Error())
 		os.Exit(1)
 	}
 
 	if err := pool.Ping(context.Background()); err != nil {
-		slog.Error("db desn't answer", "error", err)
+		slog.Error("db desn't answer", "error", err.Error())
 		os.Exit(1)
 	}
 	log.Println("connect to db")

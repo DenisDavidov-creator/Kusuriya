@@ -161,7 +161,7 @@ func (s *KnowledgebaseService) CreateSymptomProfiles(ctx context.Context, ds []d
 	if err != nil {
 		return nil, err
 	}
-	defer s.repo.Rollback(ctx)
+	defer func() { _ = s.repo.Rollback(ctx) }()
 	err = s.repo.DeleteSymptomProfiles(ctx, int64(id))
 	if err != nil {
 		return nil, err
@@ -183,7 +183,7 @@ func (s *KnowledgebaseService) CreateFactorProfiles(ctx context.Context, ds []do
 	if err != nil {
 		return nil, err
 	}
-	defer s.repo.Rollback(ctx)
+	defer func() { _ = s.repo.Rollback(ctx) }()
 	err = s.repo.DeleteFactorProfiles(ctx, int64(id))
 	if err != nil {
 		return nil, err
