@@ -168,6 +168,7 @@ func (r *KnowledgebaseRepository) UpdateCause(ctx context.Context, d domain.Caus
 		remedyID = pgtype.Int8{Int64: *d.RemedyID, Valid: true}
 	}
 	params := sqlcgen.UpdateCauseParams{
+		ID:    d.ID,
 		Code:  d.Code,
 		Name:  d.Name,
 		Type:  d.Type,

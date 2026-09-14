@@ -45,6 +45,8 @@ func MapErr(err error) (int, slog.Level, string) {
 		errors.Is(err, io.ErrUnexpectedEOF),
 		errors.Is(err, strconv.ErrSyntax):
 		return http.StatusBadRequest, slog.LevelInfo, "bad request"
+	case errors.Is(err, domain.ErrCheckPass):
+		return http.StatusBadRequest, slog.LevelInfo, "check constraint not passed"
 	default:
 		var syntaxErr *json.SyntaxError
 		var typeErr *json.UnmarshalTypeError

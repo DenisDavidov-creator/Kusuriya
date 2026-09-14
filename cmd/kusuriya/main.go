@@ -19,11 +19,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	_ = godotenv.Load()
+	// _ = godotenv.Load()
 
 	log := logger.New()
 	slog.SetDefault(log)
@@ -96,11 +95,13 @@ func ConntectToDB() *pgxpool.Pool {
 
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		log.Fatalf("We can't open the pool connection %v", err)
+		slog.Error("We can't open the pool connection", err)
+		os.Exit(1)
 	}
 
 	if err := pool.Ping(context.Background()); err != nil {
-		log.Fatalf("db doesn't answer %v", err)
+		slog.Error("db desn't answer", "error", err)
+		os.Exit(1)
 	}
 	log.Println("connect to db")
 	return pool

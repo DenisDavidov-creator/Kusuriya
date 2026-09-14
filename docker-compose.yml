@@ -24,7 +24,7 @@ services:
       - ./db/migrations:/migrations
     command:
       - "-path=/migrations"
-      - "-database=postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable"
+      - "-database=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable"
       - "up"
 
   seed:
@@ -37,7 +37,19 @@ services:
     command:
       - "sh"
       - "-c"
-      - "COUNT=$$(psql postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable -tAc 'SELECT count(*) FROM remedies'); if [ \"$$COUNT\" = \"0\" ]; then psql postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable -f /seed.sql; else echo 'already seeded'; fi"
-
+      - "COUNT=$$(psql postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable -tAc 'SELECT count(*) FROM remedies'); if [ \"$$COUNT\" = \"0\" ]; then psql postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable -f /seed.sql; else echo 'already seeded'; fi"
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+    depends_on:
+      seed:
+        condition: service_completed_successfully
 volumes:
-  pgdata:      
+  pgdata:

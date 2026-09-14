@@ -352,9 +352,9 @@ func (rs CreateSymptomsProfileRequests) Validate() ([]string, error) {
 		if r.Likelihood > 1 || r.Likelihood <= 0 {
 			problems = append(problems, fmt.Sprintf("%d: likelihood is empty", r.SymptomID))
 		}
-		if len(problems) != 0 {
-			return problems, httpx.ErrValidation
-		}
+	}
+	if len(problems) != 0 {
+		return problems, httpx.ErrValidation
 	}
 	return nil, nil
 }
@@ -421,7 +421,7 @@ func (rs CreateFactorsProfileRequests) Validate() ([]string, error) {
 type FactorProfileResponse struct {
 	ID       int64   `json:"id"`
 	CauseID  int64   `json:"cause_id"`
-	FactorID int64   `json:"Factor_id"`
+	FactorID int64   `json:"factor_id"`
 	Modifier float64 `json:"modifier"`
 }
 
