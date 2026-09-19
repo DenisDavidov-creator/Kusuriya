@@ -7,12 +7,12 @@ import (
 )
 
 type CreateCauseRequest struct {
-	Code        string  `json:"code"`
-	Name        string  `json:"name"`
-	Type        string  `json:"type"`
-	Prior       float64 `json:"prior"`
-	Description string  `json:"description"`
-	RemedyID    *int64  `json:"remedy_id"`
+	Code        string  `json:"code" example:"POI-DATU" binding:"required"`
+	Name        string  `json:"name" example:"Datura (thorn-apple)" binding:"required"`
+	Type        string  `json:"type" example:"poison" enums:"poison,disease" binding:"required"`
+	Prior       float64 `json:"prior" example:"0.008" minimum:"0" maximum:"1" binding:"required"`
+	Description string  `json:"description" example:"Delirium-inducing seeds and flowers."`
+	RemedyID    *int64  `json:"remedy_id" example:"11"`
 }
 
 func (r CreateCauseRequest) ToDomain() domain.Cause {
@@ -47,13 +47,13 @@ func (r CreateCauseRequest) Validate() ([]string, error) {
 }
 
 type CauseResponse struct {
-	ID          int64   `json:"id"`
-	Code        string  `json:"code"`
-	Name        string  `json:"name"`
-	Type        string  `json:"type"`
-	Prior       float64 `json:"prior"`
-	Description string  `json:"description"`
-	RemedyID    *int64  `json:"remedy_id"`
+	ID          int64   `json:"id" example:"8"`
+	Code        string  `json:"code" example:"POI-DATU"`
+	Name        string  `json:"name" example:"Datura (thorn-apple)"`
+	Type        string  `json:"type" example:"poison" enums:"poison,disease"`
+	Prior       float64 `json:"prior" example:"0.008"`
+	Description string  `json:"description" example:"Delirium-inducing seeds and flowers."`
+	RemedyID    *int64  `json:"remedy_id" example:"11"`
 }
 
 func DomainToCause(d *domain.Cause) CauseResponse {
@@ -78,13 +78,13 @@ func DomainsToCauses(doms []domain.Cause) []CauseResponse {
 }
 
 type UpdateCauseRequest struct {
-	ID          int64   `json:"id"`
-	Code        string  `json:"code"`
-	Name        string  `json:"name"`
-	Type        string  `json:"type"`
-	Prior       float64 `json:"prior"`
-	Description string  `json:"description"`
-	RemedyID    *int64  `json:"remedy_id"`
+	ID          int64   `json:"id" swaggerignore:"true"` // ignored: the id comes from the URL
+	Code        string  `json:"code" example:"POI-DATU" binding:"required"`
+	Name        string  `json:"name" example:"Datura (thorn-apple)" binding:"required"`
+	Type        string  `json:"type" example:"poison" enums:"poison,disease" binding:"required"`
+	Prior       float64 `json:"prior" example:"0.01" minimum:"0" maximum:"1" binding:"required"`
+	Description string  `json:"description" example:"Delirium-inducing seeds and flowers."`
+	RemedyID    *int64  `json:"remedy_id" example:"11"`
 }
 
 func (r UpdateCauseRequest) Validate() ([]string, error) {
@@ -120,16 +120,16 @@ func (r *UpdateCauseRequest) ToDomain(id int) domain.Cause {
 }
 
 type CreateRemedyRequest struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Notes       string `json:"notes"`
+	Name        string `json:"name" example:"Activated Charcoal" binding:"required"`
+	Description string `json:"description" example:"Adsorbs ingested poison before it spreads through the body."`
+	Notes       string `json:"notes" example:"Most useful shortly after the poison is swallowed."`
 }
 
 type RemedyResponse struct {
-	ID          int64  `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Notes       string `json:"notes"`
+	ID          int64  `json:"id" example:"2"`
+	Name        string `json:"name" example:"Activated Charcoal"`
+	Description string `json:"description" example:"Adsorbs ingested poison before it spreads through the body."`
+	Notes       string `json:"notes" example:"Most useful shortly after the poison is swallowed."`
 }
 
 func (r *CreateRemedyRequest) ToDomain() domain.Remedy {
@@ -170,9 +170,9 @@ func DomainsToRemedies(doms []domain.Remedy) []RemedyResponse {
 }
 
 type CreateFactorRequest struct {
-	Code        string `json:"code"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Code        string `json:"code" example:"FAC-FORAGED" binding:"required"`
+	Name        string `json:"name" example:"Ate foraged plants" binding:"required"`
+	Description string `json:"description" example:"Consumed wild-gathered plants, roots, or mushrooms."`
 }
 
 func (r CreateFactorRequest) ToDomain() domain.Factor {
@@ -197,10 +197,10 @@ func (r CreateFactorRequest) Validate() ([]string, error) {
 }
 
 type FactorResponse struct {
-	ID          int64  `json:"id"`
-	Code        string `json:"code"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ID          int64  `json:"id" example:"8"`
+	Code        string `json:"code" example:"FAC-FORAGED"`
+	Name        string `json:"name" example:"Ate foraged plants"`
+	Description string `json:"description" example:"Consumed wild-gathered plants, roots, or mushrooms."`
 }
 
 func DomainToFactor(d *domain.Factor) FactorResponse {
@@ -222,7 +222,7 @@ func DomainsToFactors(doms []domain.Factor) []FactorResponse {
 }
 
 type CreateCategoryRequest struct {
-	Name string `json:"name"`
+	Name string `json:"name" example:"Ophthalmic" binding:"required"`
 }
 
 func (r CreateCategoryRequest) ToDomain() domain.Category {
@@ -242,8 +242,8 @@ func (r CreateCategoryRequest) Validate() ([]string, error) {
 }
 
 type CategoryResponse struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
+	ID   int64  `json:"id" example:"7"`
+	Name string `json:"name" example:"Ophthalmic"`
 }
 
 func DomainToCategory(d *domain.Category) CategoryResponse {
@@ -262,10 +262,10 @@ func DomainsToCategories(doms []domain.Category) []CategoryResponse {
 }
 
 type CreateSymptomRequest struct {
-	Code        string `json:"code"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CategoryID  int64  `json:"category_id"`
+	Code        string `json:"code" example:"SYM-DILA" binding:"required"`
+	Name        string `json:"name" example:"Dilated pupils" binding:"required"`
+	Description string `json:"description" example:"Abnormally widened pupils"`
+	CategoryID  int64  `json:"category_id" example:"7" binding:"required"`
 }
 
 func (r CreateSymptomRequest) ToDomain() domain.Symptom {
@@ -295,11 +295,11 @@ func (r CreateSymptomRequest) Validate() ([]string, error) {
 }
 
 type SymptomResponse struct {
-	ID          int64  `json:"id"`
-	Code        string `json:"code"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CategoryID  int64  `json:"category_id"`
+	ID          int64  `json:"id" example:"38"`
+	Code        string `json:"code" example:"SYM-DILA"`
+	Name        string `json:"name" example:"Dilated pupils"`
+	Description string `json:"description" example:"Abnormally widened pupils"`
+	CategoryID  int64  `json:"category_id" example:"7"`
 }
 
 func DomainToSymptom(d *domain.Symptom) SymptomResponse {
@@ -322,11 +322,11 @@ func DomainsToSymptoms(doms []domain.Symptom) []SymptomResponse {
 }
 
 type CreateSymptomProfileRequest struct {
-	SymptomID  int64   `json:"symptom_id"`
-	Likelihood float64 `json:"likelihood"`
+	SymptomID  int64   `json:"symptom_id" example:"38" binding:"required"`
+	Likelihood float64 `json:"likelihood" example:"0.85" minimum:"0" maximum:"1" binding:"required"`
 }
 type CreateSymptomsProfileRequests struct {
-	Profiles []CreateSymptomProfileRequest `json:"profiles"`
+	Profiles []CreateSymptomProfileRequest `json:"profiles" binding:"required"`
 }
 
 func (rs CreateSymptomsProfileRequests) ToDomains(id int64) []domain.SymptomProfile {
@@ -360,10 +360,10 @@ func (rs CreateSymptomsProfileRequests) Validate() ([]string, error) {
 }
 
 type SymptomProfileResponse struct {
-	ID         int64   `json:"id"`
-	CauseID    int64   `json:"cause_id"`
-	SymptomID  int64   `json:"symptom_id"`
-	Likelihood float64 `json:"likelihood"`
+	ID         int64   `json:"id" example:"1"`
+	CauseID    int64   `json:"cause_id" example:"8"`
+	SymptomID  int64   `json:"symptom_id" example:"38"`
+	Likelihood float64 `json:"likelihood" example:"0.85"`
 }
 
 func DomainsToSymptomsProfiles(doms []domain.SymptomProfile) []SymptomProfileResponse {
@@ -381,11 +381,11 @@ func DomainsToSymptomsProfiles(doms []domain.SymptomProfile) []SymptomProfileRes
 }
 
 type CreateFactorProfileRequest struct {
-	FactorID int64   `json:"factor_id"`
-	Modifier float64 `json:"modifier"`
+	FactorID int64   `json:"factor_id" example:"8" binding:"required"`
+	Modifier float64 `json:"modifier" example:"0.7" minimum:"0" maximum:"1" binding:"required"`
 }
 type CreateFactorsProfileRequests struct {
-	Profiles []CreateFactorProfileRequest `json:"profiles"`
+	Profiles []CreateFactorProfileRequest `json:"profiles" binding:"required"`
 }
 
 func (rs CreateFactorsProfileRequests) ToDomains(id int64) []domain.FactorProfile {
@@ -419,10 +419,10 @@ func (rs CreateFactorsProfileRequests) Validate() ([]string, error) {
 }
 
 type FactorProfileResponse struct {
-	ID       int64   `json:"id"`
-	CauseID  int64   `json:"cause_id"`
-	FactorID int64   `json:"factor_id"`
-	Modifier float64 `json:"modifier"`
+	ID       int64   `json:"id" example:"1"`
+	CauseID  int64   `json:"cause_id" example:"8"`
+	FactorID int64   `json:"factor_id" example:"8"`
+	Modifier float64 `json:"modifier" example:"0.7"`
 }
 
 func DomainsToFactorsProfiles(doms []domain.FactorProfile) []FactorProfileResponse {

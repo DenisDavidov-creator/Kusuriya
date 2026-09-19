@@ -51,5 +51,16 @@ services:
     depends_on:
       seed:
         condition: service_completed_successfully
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    profiles: ["dev"]
+    ports:
+      - "8090:8080"
+    environment:
+      - SWAGGER_JSON=/swagger/swagger.json
+    volumes:
+      - ./docs:/swagger  
+
 volumes:
   pgdata:

@@ -8,8 +8,8 @@ import (
 )
 
 type CreateCaseRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Title       string `json:"title" example:"Consort Lihua's chambermaid" binding:"required"`
+	Description string `json:"description" example:"Collapsed after the spring banquet."`
 }
 
 func (r CreateCaseRequest) ToDomain() domain.Case {
@@ -33,10 +33,10 @@ func (r CreateCaseRequest) Validate() ([]string, error) {
 }
 
 type CaseResponse struct {
-	ID          int64  `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Status      string `json:"status"`
+	ID          int64  `json:"id" example:"1"`
+	Title       string `json:"title" example:"Consort Lihua's chambermaid"`
+	Description string `json:"description" example:"Collapsed after the spring banquet."`
+	Status      string `json:"status" example:"open" enums:"open,closed"`
 }
 
 type CaseResponseWithDiagnoses struct {
@@ -61,9 +61,9 @@ func DomainToCase(d *domain.Case) CaseResponse {
 }
 
 type CreateObservationRequest struct {
-	Kind  string `json:"kind"`
-	RefID int64  `json:"ref_id"`
-	Note  string `json:"note"`
+	Kind  string `json:"kind" example:"symptom" enums:"symptom,factor" binding:"required"`
+	RefID int64  `json:"ref_id" example:"38" binding:"required"`
+	Note  string `json:"note" example:"Pupils still wide by evening."`
 }
 
 func (r CreateObservationRequest) ToDomain(CaseID int) domain.Observation {
@@ -92,12 +92,12 @@ func (r CreateObservationRequest) Validate() ([]string, error) {
 }
 
 type ObservationsResponse struct {
-	ID         int64     `json:"id"`
-	CaseID     int64     `json:"case_id"`
-	Kind       string    `json:"kind"`
-	RefID      int64     `json:"ref_id"`
-	ObservedAt time.Time `json:"observed_at"`
-	Note       string    `json:"note"`
+	ID         int64     `json:"id" example:"1"`
+	CaseID     int64     `json:"case_id" example:"1"`
+	Kind       string    `json:"kind" example:"symptom" enums:"symptom,factor"`
+	RefID      int64     `json:"ref_id" example:"38"`
+	ObservedAt time.Time `json:"observed_at" example:"2026-09-19T10:00:00Z"`
+	Note       string    `json:"note" example:"Pupils still wide by evening."`
 }
 
 func DomainToObservation(d *domain.Observation) ObservationsResponse {

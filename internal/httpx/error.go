@@ -16,9 +16,9 @@ type ErrorResponse struct {
 }
 
 type ErrorBody struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Details any    `json:"details"`
+	Code    int    `json:"code" example:"400"`
+	Message string `json:"message" example:"validation not passed"`
+	Details any    `json:"details" swaggertype:"array,string" example:"code is empty"`
 }
 
 func NewErrorResponse(code int, message string, details any) ErrorResponse {

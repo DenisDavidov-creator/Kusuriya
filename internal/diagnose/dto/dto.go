@@ -6,8 +6,8 @@ import (
 )
 
 type DetermineDiagnoseRequest struct {
-	SymptomCodes []string `json:"symptom_codes"`
-	FactorCodes  []string `json:"factor_codes"`
+	SymptomCodes []string `json:"symptom_codes" example:"SYM-DILA,SYM-HALL,SYM-DELI"`
+	FactorCodes  []string `json:"factor_codes" example:"FAC-FORAGED"`
 }
 
 func (r DetermineDiagnoseRequest) ToDomain() domain.DiagnosisRequest {
@@ -25,17 +25,20 @@ func (r DetermineDiagnoseRequest) Validate() error {
 }
 
 type DetermineDiagnoseResponse struct {
-	P        float64       `json:"p"`
+	P        float64       `json:"p" example:"0.5167882008816377"`
 	Cause    CauseResponse `json:"cause"`
 	Evidence []Evidence    `json:"evidence"`
 }
 
+// Evidence is one term of the score: a symptom or factor the cause was judged on.
+// Weight is the likelihood/modifier that was multiplied in, or null when the cause
+// has no profile for that code (Matched == false).
 type Evidence struct {
-	Kind    string   `json:"kind"`
-	KindID  int64    `json:"kind_id"`
-	Code    string   `json:"code"`
-	Weight  *float64 `json:"weight"`
-	Matched bool     `json:"matched"`
+	Kind    string   `json:"kind" example:"symptom" enums:"symptom,factor"`
+	KindID  int64    `json:"kind_id" example:"38"`
+	Code    string   `json:"code" example:"SYM-DILA"`
+	Weight  *float64 `json:"weight" example:"0.85"`
+	Matched bool     `json:"matched" example:"true"`
 }
 
 func DomainToEvidence(d []domain.Contribution) []Evidence {
@@ -54,16 +57,16 @@ func DomainToEvidence(d []domain.Contribution) []Evidence {
 }
 
 type CauseResponse struct {
-	ID                int64   `json:"id"`
-	Code              string  `json:"code"`
-	Name              string  `json:"name"`
-	Type              string  `json:"type"`
-	Prior             float64 `json:"prior"`
-	Description       string  `json:"description"`
-	RemedyID          *int64  `json:"remedy_id"`
-	RemedyName        *string `json:"remedy_name"`
-	RemedyDescription *string `json:"remedy_description"`
-	RemedyNotes       *string `json:"remedy_notes"`
+	ID                int64   `json:"id" example:"8"`
+	Code              string  `json:"code" example:"POI-DATU"`
+	Name              string  `json:"name" example:"Datura (thorn-apple)"`
+	Type              string  `json:"type" example:"poison" enums:"poison,disease"`
+	Prior             float64 `json:"prior" example:"0.008"`
+	Description       string  `json:"description" example:"Delirium-inducing seeds and flowers."`
+	RemedyID          *int64  `json:"remedy_id" example:"11"`
+	RemedyName        *string `json:"remedy_name" example:"Palace Physician's Antidote"`
+	RemedyDescription *string `json:"remedy_description" example:"A prepared counter-agent for slowed heart and clouded mind."`
+	RemedyNotes       *string `json:"remedy_notes" example:"Kept close at every banquet."`
 }
 
 func DomainToCauseWithRemedy(d *domain.CauseWithRemedy) CauseResponse {

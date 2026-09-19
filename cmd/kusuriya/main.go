@@ -18,9 +18,15 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// @title           Pet Project API
+// @version         1.0
+// @description     A simple API for my pet project
+// @host            localhost:8080
+// @BasePath        /api/v1
 func main() {
 	// _ = godotenv.Load()
 
@@ -42,38 +48,46 @@ func main() {
 	hd := hdh.NewDiagnoseHandler(sd)
 	hc := hch.NewCaseHandler(sc)
 
-	r.Post("/cause", hk.CreateCause)
-	r.Get("/cause/{id}", hk.GetCauseByID)
-	r.Get("/cause", hk.GetCauses)
-	r.Put("/cause/{id}", hk.UpdateCause)
-	r.Delete("/cause/{id}", hk.DeleteCause)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"http://localhost:8090"}, // the Swagger UI
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	}))
 
-	r.Put("/cause/{id}/symptom-profiles", hk.CreateSymptomProfiles)
-	r.Put("/cause/{id}/factor-profiles", hk.CreateFactorProfiles)
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Post("/cause", hk.CreateCause)
+		r.Get("/cause/{id}", hk.GetCauseByID)
+		r.Get("/cause", hk.GetCauses)
+		r.Put("/cause/{id}", hk.UpdateCause)
+		r.Delete("/cause/{id}", hk.DeleteCause)
 
-	r.Post("/remedy", hk.CreateRemedy)
-	r.Get("/remedy/{id}", hk.GetRemedyByID)
-	r.Get("/remedy", hk.GetRemedies)
+		r.Put("/cause/{id}/symptom-profiles", hk.CreateSymptomProfiles)
+		r.Put("/cause/{id}/factor-profiles", hk.CreateFactorProfiles)
 
-	r.Post("/factor", hk.CreateFactor)
-	r.Get("/factor/{id}", hk.GetFactorByID)
-	r.Get("/factor", hk.GetFactors)
+		r.Post("/remedy", hk.CreateRemedy)
+		r.Get("/remedy/{id}", hk.GetRemedyByID)
+		r.Get("/remedy", hk.GetRemedies)
 
-	r.Post("/category", hk.CreateCategory)
-	r.Get("/category/{id}", hk.GetCategoryByID)
-	r.Get("/category", hk.GetCategories)
+		r.Post("/factor", hk.CreateFactor)
+		r.Get("/factor/{id}", hk.GetFactorByID)
+		r.Get("/factor", hk.GetFactors)
 
-	r.Post("/symptom", hk.CreateSymptom)
-	r.Get("/symptom/{id}", hk.GetSymptomByID)
-	r.Get("/symptom", hk.GetSymptoms)
+		r.Post("/category", hk.CreateCategory)
+		r.Get("/category/{id}", hk.GetCategoryByID)
+		r.Get("/category", hk.GetCategories)
 
-	r.Post("/diagnose", hd.DetermineDiagnose)
+		r.Post("/symptom", hk.CreateSymptom)
+		r.Get("/symptom/{id}", hk.GetSymptomByID)
+		r.Get("/symptom", hk.GetSymptoms)
 
-	r.Post("/case", hc.CreateCase)
-	r.Get("/case/{id}", hc.GetCaseByID)
-	r.Patch("/case/{id}/close", hc.CloseCaseByID)
-	r.Post("/case/{id}/observation", hc.CreateObservation)
-	r.Get("/case/{id}/observation", hc.GetObservationByID)
+		r.Post("/diagnose", hd.DetermineDiagnose)
+
+		r.Post("/case", hc.CreateCase)
+		r.Get("/case/{id}", hc.GetCaseByID)
+		r.Patch("/case/{id}/close", hc.CloseCaseByID)
+		r.Post("/case/{id}/observation", hc.CreateObservation)
+		r.Get("/case/{id}/observation", hc.GetObservationByID)
+	})
 
 	log.Info("starting server", "port", 8080)
 
