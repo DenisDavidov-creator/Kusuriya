@@ -6,18 +6,24 @@ import (
 	scs "Kusuriya/internal/cases/service"
 	hdh "Kusuriya/internal/diagnose/handler"
 	sds "Kusuriya/internal/diagnose/service"
+	"Kusuriya/internal/httpx"
 	hkh "Kusuriya/internal/knowledgebase/handler"
 	rkr "Kusuriya/internal/knowledgebase/repository"
 	sks "Kusuriya/internal/knowledgebase/service"
 	"Kusuriya/internal/logger"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -33,10 +39,10 @@ func main() {
 	log := logger.New()
 	slog.SetDefault(log)
 
-	r := chi.NewRouter()
 	pool := ConntectToDB()
 	defer pool.Close()
 
+	r := chi.NewRouter()
 	rk := rkr.NewKnowledgebaseRepository(pool)
 	rc := rcr.NewCaseRepository(pool)
 
@@ -48,9 +54,13 @@ func main() {
 	hd := hdh.NewDiagnoseHandler(sd)
 	hc := hch.NewCaseHandler(sc)
 
+	r.Use(middleware.RequestID)
+	r.Use(httpx.StructuredLogger)
+	r.Use(middleware.Recoverer)
+
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"http://localhost:8090"}, // the Swagger UI
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	}))
 
@@ -89,11 +99,33 @@ func main() {
 		r.Get("/case/{id}/observation", hc.GetObservationByID)
 	})
 
+	srv := &http.Server{
+		Addr:              ":8080",
+		Handler:           r,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      8 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Error("server failed", "err", err)
+			stop()
+		}
+	}()
 	log.Info("starting server", "port", 8080)
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
-		log.Error("server failed", "err", err)
-		os.Exit(1)
+	<-ctx.Done()
+	log.Info("shutting down")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		slog.Error("forced shutdown", "err", err)
 	}
 }
 
